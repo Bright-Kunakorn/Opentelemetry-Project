@@ -1,0 +1,35 @@
+<Project>
+  <Import Project=".\Common.props" />
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn),1574,1591</NoWarn>
+    <IsPackable>false</IsPackable>
+    <CodeAnalysisRuleSet>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'OpenTelemetry.sln'))\build\OpenTelemetry.test.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefaultTargetFrameworkForExampleApps>net7.0</DefaultTargetFrameworkForExampleApps>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <Content Include="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'OpenTelemetry.sln'))\build\xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!--Temp workaround to allow using daily dotnet 6 builds-->
+    <!--<PackageReference Include="System.Runtime.CompilerServices.Unsafe" PrivateAssets="All" NoWarn="NU1605" Version="6.0.0-preview.4.21253.7" />-->
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Running unit tests from VSCode does not work with .NET SDK 6.0.200 without ProduceReferenceAssemblyInOutDir -->
+    <!-- Related breaking change: https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/write-reference-assemblies-to-obj -->
+    <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+</Project>
